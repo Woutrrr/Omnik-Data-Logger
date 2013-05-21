@@ -63,6 +63,11 @@ s.close()
 #sock.close
 
 msg = InverterMsg(data)  # This is where the magic happens ;)
+now = datetime.datetime.now()
+
+print "Time: ", now.strftime('%H:%M')
+print "Date: ", now.strftime('%Y%m%d')
+
 print "ID: {0}".format(msg.getID())
 
 print "E Today: {0:>5}   Total: {1:<5}".format(msg.getEToday(), msg.getETotal())

@@ -12,6 +12,7 @@ status.
 ## Installation and Setup
 
 * Install Python
+* To use your local weather install yweather `pip install yweather`, and update your config with city and country
 * Git clone the source with `git clone https://github.com/Woutrrr/Omnik-Data-Logger.git`
 * Copy the config-org.cfg to config.cfg
 * Change the settings in config.cfg
@@ -19,6 +20,13 @@ status.
 data from your inverter
 * Run the script with `python OmnikExport.py` or better set a scheduled task or 
 cronjob.
+
+### Smart meter (Slimme meter)
+To upload your current usage to pvoutput, there must be a file to read in which this data can be found
+In this file there must by a string like this:
+`actual_usage   120.0`
+Which means current usage is 120W
+See the example is the Resources folder `slimme_meter.txt`
 
 ### Example cronjob
 With these options this will execute the script every minute.
