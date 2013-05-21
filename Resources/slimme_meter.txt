@@ -1,0 +1,7 @@
+low tariff.value  27.365
+normal_tariff.value   0.000
+low_tariff_produced.value  13.471
+normal_tariff_produced.value   0.000
+actual_usage.value 0.0
+actual_production.value 270.0
+gas_usage.value  10.601
