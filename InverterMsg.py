@@ -70,7 +70,7 @@ class InverterMsg(object):
     @property
     def power(self):
         """Power output"""
-        print self.__get_short(59)
+        return self.__get_short(59)
 
     @property
     def e_total(self):
