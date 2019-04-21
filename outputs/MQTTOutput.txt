@@ -1,0 +1,20 @@
+# Install as service
+
+cat >>  /etc/systemd/system/mqtt_log_omnik.service << END
+[Unit]
+Description=omniksol wifi to mqtt
+
+[Service]
+ExecStart=/usr/bin/python /home/pi/omnik-logger/mqtt_log_omnik.py
+User=pi
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+END
+
+# after that reload and enable systemd using command:
+systemctl daemon-reload
+systemctl enable mqtt_log_omnik.service
+
