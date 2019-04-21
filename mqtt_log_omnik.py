@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-Get data from the omniksol inverter and output to console. This is a small
+Get data from the omniksol inverter and output to mqtt. This is a small
 utility program that just changes the config to output anything to mqtt.
 """
 import OmnikExport
