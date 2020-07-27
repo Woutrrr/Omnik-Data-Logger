@@ -30,9 +30,8 @@ class PluginMount(type):
         cls.plugins.append(instance)
 
 
-class Plugin(object):
+class Plugin(object, metaclass=PluginMount):
     """A plugin which must provide a process_message() method"""
-    __metaclass__ = PluginMount
 
     config = None
     logger = None
