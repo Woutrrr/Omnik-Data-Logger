@@ -13,6 +13,7 @@ import os
 from PluginLoader import Plugin
 import InverterMsg  # Import the Msg handler
 import codecs
+import re
 
 
 class OmnikExport(object):
@@ -76,7 +77,20 @@ class OmnikExport(object):
 
         msg = InverterMsg.InverterMsg(data)
 
-        self.logger.info("ID: {0}".format(msg.id))
+        # At this point the Inverter could be starting up or shutting down
+        # What appears to be common at this point is the ID isn't of the expected form
+        # when in error: some Chinese characters
+        # expecting something like: SF5K016008677
+        if re.match(r'^[A-Z0-9]+$', msg.id) == None:
+            self.logger.error('Inverter not in correct state')
+            sys.exit(1)
+
+        try:
+            self.logger.info("ID: {0}".format(msg.id))
+        except UnicodeDecodeError:
+            print('some issue with data or InverterMsg decoding')
+            print('data == {}'.format(data))
+            print('msg == {}'.format(msg))
 
         for plugin in Plugin.plugins:
             self.logger.debug('Run plugin' + plugin.__class__.__name__)
@@ -154,7 +168,7 @@ class OmnikExport(object):
         Returns:
             str: Information request string for inverter
         """
-		# changed by python3
+        # changed by python3
         response = b'\x68\x02\x40\x30'
 
         double_hex = hex(serial_no)[2:] * 2
@@ -165,7 +179,7 @@ class OmnikExport(object):
 
         cs_count = 115 + sum([ord(c) for c in hex_list])
 
-		# changed for python3
+        # changed for python3
         checksum = codecs.decode(hex(cs_count)[-2:], 'hex')
 
         # changed for python3
