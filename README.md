@@ -1,5 +1,6 @@
+This fork is an attempt to change this project to be Python3 compatible.
+
 # Omnik Data Logger
-=====
 Omnik Data Logger is a small script for uploading data from a Omniksol Solar 
 inverter, equipped with a wifi module, to a database and/or to PVoutput.org. 
 
