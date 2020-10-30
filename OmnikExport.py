@@ -72,7 +72,12 @@ class OmnikExport(object):
 
         wifi_serial = self.config.getint('inverter', 'wifi_sn')
         inverter_socket.sendall(OmnikExport.generate_string(wifi_serial))
-        data = inverter_socket.recv(1024)
+        try:
+            data = inverter_socket.recv(1024)
+        except socket.timeout as msg:
+            self.logger.error('socket timed out')
+            self.logger.error(msg)
+            sys.exit(1)
         inverter_socket.close()
 
         msg = InverterMsg.InverterMsg(data)
@@ -81,8 +86,8 @@ class OmnikExport(object):
         # What appears to be common at this point is the ID isn't of the expected form
         # when in error: some Chinese characters
         # expecting something like: SF5K016008677
-        if re.match(r'^[A-Z0-9]+$', msg.id) == None:
-            self.logger.error('Inverter not in correct state')
+        if re.match(r'^[A-Z0-9]+ *$', msg.id) == None:
+            self.logger.error('Inverter not in correct state - found "{}" - expecting \'^[A-Z0-9]+ *$\''.format(msg.id))
             sys.exit(1)
 
         try:
@@ -93,7 +98,7 @@ class OmnikExport(object):
             print('msg == {}'.format(msg))
 
         for plugin in Plugin.plugins:
-            self.logger.debug('Run plugin' + plugin.__class__.__name__)
+            self.logger.info('Run plugin' + plugin.__class__.__name__)
             plugin.process_message(msg)
 
     def build_logger(self, config):
