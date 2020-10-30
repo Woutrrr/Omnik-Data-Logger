@@ -5,6 +5,9 @@
 # can do whatever you want with this stuff. If we meet some day, and you think
 # this stuff is worth it, you can buy me a beer in return. Widmar 
 # ----------------------------------------------------------------------------
+# Heavily updated by Christopher McAvaney <christopher.mcavaney@gmail.com>
+# Now uses the Homie Convention library (https://github.com/mjcumming/homie4) with 
+# a locally defined "Solar Inverter Device".
 ##
 
 import PluginLoader
