@@ -19,7 +19,14 @@ class InverterMsg(object):
         Returns:
             str: String in the message from start to end
         """
-        return self.raw_msg[begin:end]
+        try:
+            decoded_str = self.raw_msg[begin:end].decode('utf-8')
+        except UnicodeDecodeError:
+            decoded_str = self.raw_msg[begin:end].decode('utf-16')
+        except:
+            raise
+            
+        return decoded_str
 
     def __get_short(self, begin, divider=10):
         """Extract short from message.
@@ -70,7 +77,7 @@ class InverterMsg(object):
     @property
     def power(self):
         """Power output"""
-        print self.__get_short(59)
+        return self.__get_short(59)
 
     @property
     def e_total(self):

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """OmnikExport LiveStats
 
 Get data from the omniksol inverter and output to console. This is a small

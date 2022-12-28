@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """OmnikExport program.
 
 Get data from an omniksol inverter with 602xxxxx - 606xxxx ans save the data in
@@ -8,10 +8,12 @@ import socket  # Needed for talking to inverter
 import sys
 import logging
 import logging.config
-import ConfigParser
+import configparser
 import os
 from PluginLoader import Plugin
 import InverterMsg  # Import the Msg handler
+import codecs
+import re
 
 
 class OmnikExport(object):
@@ -29,7 +31,7 @@ class OmnikExport(object):
         config_files = [self.__expand_path('config-default.cfg'),
                         self.__expand_path(config_file)]
 
-        self.config = ConfigParser.RawConfigParser()
+        self.config = configparser.RawConfigParser()
         self.config.read(config_files)
 
     def run(self):
@@ -70,15 +72,33 @@ class OmnikExport(object):
 
         wifi_serial = self.config.getint('inverter', 'wifi_sn')
         inverter_socket.sendall(OmnikExport.generate_string(wifi_serial))
-        data = inverter_socket.recv(1024)
+        try:
+            data = inverter_socket.recv(1024)
+        except socket.timeout as msg:
+            self.logger.error('socket timed out')
+            self.logger.error(msg)
+            sys.exit(1)
         inverter_socket.close()
 
         msg = InverterMsg.InverterMsg(data)
 
-        self.logger.info("ID: {0}".format(msg.id))
+        # At this point the Inverter could be starting up or shutting down
+        # What appears to be common at this point is the ID isn't of the expected form
+        # when in error: some Chinese characters
+        # expecting something like: SF5K016008677
+        if re.match(r'^[A-Z0-9]+ *$', msg.id) == None:
+            self.logger.error('Inverter not in correct state - found "{}" - expecting \'^[A-Z0-9]+ *$\''.format(msg.id))
+            sys.exit(1)
+
+        try:
+            self.logger.info("ID: {0}".format(msg.id))
+        except UnicodeDecodeError:
+            print('some issue with data or InverterMsg decoding')
+            print('data == {}'.format(data))
+            print('msg == {}'.format(msg))
 
         for plugin in Plugin.plugins:
-            self.logger.debug('Run plugin' + plugin.__class__.__name__)
+            self.logger.info('Run plugin' + plugin.__class__.__name__)
             plugin.process_message(msg)
 
     def build_logger(self, config):
@@ -153,15 +173,23 @@ class OmnikExport(object):
         Returns:
             str: Information request string for inverter
         """
-        response = '\x68\x02\x40\x30'
+        # changed by python3
+        response = b'\x68\x02\x40\x30'
 
         double_hex = hex(serial_no)[2:] * 2
-        hex_list = [double_hex[i:i + 2].decode('hex') for i in
+
+        # changed for python3
+        hex_list = [codecs.decode(double_hex[i:i + 2], 'hex') for i in
                     reversed(range(0, len(double_hex), 2))]
 
         cs_count = 115 + sum([ord(c) for c in hex_list])
-        checksum = hex(cs_count)[-2:].decode('hex')
-        response += ''.join(hex_list) + '\x01\x00' + checksum + '\x16'
+
+        # changed for python3
+        checksum = codecs.decode(hex(cs_count)[-2:], 'hex')
+
+        # changed for python3
+        response += b''.join(hex_list) + b'\x01\x00' + checksum + b'\x16'
+
         return response
 
 

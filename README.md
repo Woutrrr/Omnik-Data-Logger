@@ -1,5 +1,9 @@
+This fork is an attempt to change this project to be Python3 compatible.
+There is an additional library (`solar_inverter_homie`) required for the MQTTOutput output type.
+You will need to install this in a location Python look at or create an `PYTHONPATH` environment variable
+that points to where you install that library folder.
+
 # Omnik Data Logger
-=====
 Omnik Data Logger is a small script for uploading data from a Omniksol Solar 
 inverter, equipped with a wifi module, to a database and/or to PVoutput.org. 
 
@@ -42,6 +46,6 @@ config.cfg, you can preserve your settings when upgrading.
 ## Development
 To help with development when no sun is present a small simulator script can be
 found in the folder Development. This script works by reading values from to
-database used by de MysqlOutput, but with the time shifted 6 hours back. To use
+database used by the MysqlOutput, but with the time shifted 6 hours back. To use
 the simulator, you should use the MysqlOutput to fill the database and configure
-database settings in de sim-config.cfg file.
+database settings in the sim-config.cfg file.
